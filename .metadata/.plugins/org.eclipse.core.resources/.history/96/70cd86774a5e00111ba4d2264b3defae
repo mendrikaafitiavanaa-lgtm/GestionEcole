@@ -1,0 +1,795 @@
+package lan.tovo.note;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import java.util.ArrayList;
+
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+//pour date et heure
+import org.jdesktop.swingx.JXDatePicker;
+//pour le calendrier popup
+import javax.swing.JSpinner;               // pour le champ heure
+import javax.swing.SpinnerDateModel;       // modèle de données pour l'heure
+import java.util.Date;                     // type Date
+import java.util.Calendar;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
+// fin
+
+public class FenFichePresence extends JFrame {
+
+	private JPanel contentPane;
+	private JLabel lblNewLabel;
+	private JLabel lblDate;
+	private JLabel lblHeure;
+	private JTextField txtnumFiche;
+	private JLabel lblNEnseignant;
+	private JLabel lblEnseignant;
+	private JLabel lblNom;
+	private JLabel lblPrnom;
+	private JComboBox cmbnumEnseignant;
+	private JTextField txtnomEnseignant;
+	private JTextField txtprenomEnseignant;
+	private JScrollPane scrollPane;
+	private JTable table;
+	private JButton button;
+	private JButton button_1;
+	private JButton button_2;
+	private JButton button_3;
+	private JButton button_4;
+	private JButton button_5;
+	private JButton btnVlider;
+	private JButton btnAnnuler;
+	
+	private ModeleFichePresence leModeleFichePresence = new ModeleFichePresence();
+	private int numLigne;
+	private static String actionDemandee;
+	private ArrayList<Classe> lesClasses;
+	private ArrayList<Eleve> lesEleves;
+	
+	private ModelePresence leModelePresence = new ModelePresence();
+	private int numLigne1;
+	
+	private ArrayList<Enseignant> lesEnseignants;
+	
+	// variable calendrier et heure
+	private JXDatePicker datePicker;
+	private JSpinner heurePresence;
+	private JLabel lblAjoutPrsence;
+	private JComboBox cmbnumEleve;
+	private JComboBox cmbnumero;
+	private JTextField txtnomEleve;
+	private JTextField txtprenomEleve;
+	private JCheckBox chkpresent;
+	private JButton btnAjouter;
+	private JScrollPane scrollPane_1;
+	private JTable table_1;
+	private JLabel lblNumero;
+	private JLabel lblNEleve;
+	private JLabel lblNom_1;
+	private JLabel lblPrnom_1;
+	private JLabel lblNClasse;
+	private JLabel lblPresent;
+	private JTable table_2;
+	private JComboBox cmbNumClasse;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FenFichePresence frame = new FenFichePresence();
+					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public FenFichePresence() {
+		setResizable(false);
+		setTitle("Fiche de Presence");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 900, 600);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		contentPane.add(getLblNewLabel());
+		contentPane.add(getLblDate());
+		contentPane.add(getLblHeure());
+		contentPane.add(getTxtnumFiche());
+		contentPane.add(getLblNEnseignant());
+		contentPane.add(getLblEnseignant());
+		contentPane.add(getLblNom());
+		contentPane.add(getLblPrnom());
+		contentPane.add(getCmbnumEnseignant());
+		contentPane.add(getTxtnomEnseignant());
+		contentPane.add(getTxtprenomEnseignant());
+		contentPane.add(getScrollPane());
+		contentPane.add(getButton());
+		contentPane.add(getButton_1());
+		contentPane.add(getButton_2());
+		contentPane.add(getButton_3());
+		contentPane.add(getButton_4());
+		contentPane.add(getButton_5());
+		contentPane.add(getBtnVlider());
+		contentPane.add(getBtnAnnuler());
+		// ajout calendrier et heure
+		contentPane.add(getDatePicker());
+		contentPane.add(getHeurePresence());
+		contentPane.add(getLblAjoutPrsence());
+		contentPane.add(getCmbnumEleve());
+		contentPane.add(getCmbnumero());
+		contentPane.add(getTxtnomEleve());
+		contentPane.add(getTxtprenomEleve());
+		contentPane.add(getChkpresent());
+		contentPane.add(getBtnAjouter());
+		contentPane.add(getScrollPane_1());
+		contentPane.add(getLblNumero());
+		contentPane.add(getLblNEleve());
+		contentPane.add(getLblNom_1());
+		contentPane.add(getLblPrnom_1());
+		contentPane.add(getLblNClasse());
+		contentPane.add(getLblPresent());
+		contentPane.add(getCmbNumClasse());
+		
+		//permet de masquer les composant
+		masquerComposant();
+	}
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("Num\u00E9ro");
+			lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNewLabel.setBounds(10, 11, 71, 14);
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLblDate() {
+		if (lblDate == null) {
+			lblDate = new JLabel("Date");
+			lblDate.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblDate.setBounds(132, 11, 71, 14);
+		}
+		return lblDate;
+	}
+	private JLabel getLblHeure() {
+		if (lblHeure == null) {
+			lblHeure = new JLabel("Heure");
+			lblHeure.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblHeure.setBounds(252, 11, 46, 14);
+		}
+		return lblHeure;
+	}
+	private JTextField getTxtnumFiche() {
+		if (txtnumFiche == null) {
+			txtnumFiche = new JTextField();
+			txtnumFiche.setBounds(10, 37, 86, 20);
+			txtnumFiche.setColumns(10);
+		}
+		return txtnumFiche;
+	}
+	private JLabel getLblNEnseignant() {
+		if (lblNEnseignant == null) {
+			lblNEnseignant = new JLabel("Num\u00E9ro");
+			lblNEnseignant.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNEnseignant.setBounds(10, 96, 96, 14);
+		}
+		return lblNEnseignant;
+	}
+	private JLabel getLblEnseignant() {
+		if (lblEnseignant == null) {
+			lblEnseignant = new JLabel("Information Enseignant");
+			lblEnseignant.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblEnseignant.setBounds(10, 71, 208, 14);
+		}
+		return lblEnseignant;
+	}
+	private JLabel getLblNom() {
+		if (lblNom == null) {
+			lblNom = new JLabel("Nom");
+			lblNom.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNom.setBounds(132, 97, 46, 14);
+		}
+		return lblNom;
+	}
+	private JLabel getLblPrnom() {
+		if (lblPrnom == null) {
+			lblPrnom = new JLabel("Pr\u00E9nom");
+			lblPrnom.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblPrnom.setBounds(363, 96, 86, 14);
+		}
+		return lblPrnom;
+	}
+	private JComboBox getCmbnumEnseignant() {
+		if (cmbnumEnseignant == null) {
+			cmbnumEnseignant = new JComboBox();
+			cmbnumEnseignant.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent arg0) {
+					btnVlider.setVisible(true);
+					btnAnnuler.setVisible(true);
+				}
+			});
+			cmbnumEnseignant.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent arg0) {
+					Enseignant enseignant = new Enseignant();
+					String numEnseignant = (String) cmbnumEnseignant.getSelectedItem();
+					ArrayList<Enseignant> nomEnseignant = enseignant.lireRecupLigne(numEnseignant);
+					for(Enseignant elem:nomEnseignant)
+						txtnomEnseignant.setText(elem.getNomEnseignant());
+				}
+			});
+			
+			Enseignant enseignant = new Enseignant();
+			lesEnseignants = enseignant.lireRecupCRUD();
+			cmbnumEnseignant.addItem("");
+			for(Enseignant elem:lesEnseignants){
+				cmbnumEnseignant.addItem(elem.getNumEnseignant());
+			}
+			cmbnumEnseignant.setBounds(10, 121, 86, 20);
+		}
+		return cmbnumEnseignant;
+	}
+	private JTextField getTxtnomEnseignant() {
+		if (txtnomEnseignant == null) {
+			txtnomEnseignant = new JTextField();
+			txtnomEnseignant.setBounds(132, 121, 206, 20);
+			txtnomEnseignant.setColumns(10);
+		}
+		return txtnomEnseignant;
+	}
+	private JTextField getTxtprenomEnseignant() {
+		if (txtprenomEnseignant == null) {
+			txtprenomEnseignant = new JTextField();
+			txtprenomEnseignant.setBounds(363, 121, 145, 20);
+			txtprenomEnseignant.setColumns(10);
+		}
+		return txtprenomEnseignant;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setBounds(10, 366, 730, 141);
+			scrollPane.setViewportView(getTable());
+		}
+		return scrollPane;
+	}
+	private JTable getTable() {
+		if (table == null) {
+			//table = new JTable();
+			table = new JTable(leModeleFichePresence);
+			
+			table.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent evt) {
+					numLigne = table.getSelectedRow();
+					
+					if( evt.getKeyCode() == evt.VK_DOWN) {
+						numLigne++;
+						if(numLigne > leModeleFichePresence.getRowCount()){
+							numLigne = leModeleFichePresence.getRowCount()-1;
+							
+						}
+						afficher(numLigne);
+					}
+					
+					if( evt.getKeyCode() == evt.VK_UP){
+						numLigne--;
+						if(numLigne < 0){
+							numLigne = 0;
+						}
+						afficher(numLigne);
+					}
+				}
+			});
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					numLigne=table.getSelectedRow();
+					afficher(numLigne);
+					 leModelePresence.filtrerParNumClasse(txtnumFiche.getText());
+					
+				}
+				
+				
+			});
+		}
+		return table;
+	}
+	private JButton getButton() {
+		if (button == null) {
+			button = new JButton("Nouveau");
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					txtnumFiche.requestFocus();
+					actionDemandee="Ajout";
+				}
+			});
+			button.setBounds(10, 516, 116, 23);
+		}
+		return button;
+	}
+	private JButton getButton_1() {
+		if (button_1 == null) {
+			button_1 = new JButton("Modifier");
+			button_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					txtnumFiche.requestFocus();
+					actionDemandee="Modifier";
+				}
+			});
+			button_1.setBounds(132, 518, 116, 23);
+		}
+		return button_1;
+	}
+	private JButton getButton_2() {
+		if (button_2 == null) {
+			button_2 = new JButton("Supprimer");
+			button_2.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					int NumLigne = -1;
+					NumLigne = table.getSelectedRow();
+					
+					if ( NumLigne != -1 ) {
+						int choix = JOptionPane.showConfirmDialog(null,"Voulez -vous Supprimez"
+								+ " une Presence?"
+								+ "\nNuméro : " + table.getValueAt(NumLigne, 0)
+								, "SUPRESSION"
+								, JOptionPane.YES_NO_OPTION);
+						
+						if ( choix == 0) {
+							String vNum;
+							vNum = String.valueOf(table.getValueAt(NumLigne, 0));
+							
+							FichePresence leFichePresence = new FichePresence(vNum);
+							
+							leFichePresence.supprimerCRUD(vNum);
+							
+							leModeleFichePresence.supprimerMOD(NumLigne);
+						}
+					}
+					
+					if ( NumLigne == -1) {
+						JOptionPane.showMessageDialog
+						(null , "Sélectionnez une ligne avant.",
+								"Suppression",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+					
+				}
+			});
+			button_2.setBounds(252, 516, 116, 23);
+		}
+		return button_2;
+	}
+	private JButton getButton_3() {
+		if (button_3 == null) {
+			button_3 = new JButton("Rechercher");
+			button_3.setBounds(378, 516, 116, 23);
+		}
+		return button_3;
+	}
+	private JButton getButton_4() {
+		if (button_4 == null) {
+			button_4 = new JButton("Imprimer");
+			button_4.setBounds(504, 518, 116, 23);
+		}
+		return button_4;
+	}
+	private JButton getButton_5() {
+		if (button_5 == null) {
+			button_5 = new JButton("Quitter");
+			button_5.setBounds(624, 516, 116, 23);
+		}
+		return button_5;
+	}
+	private JButton getBtnVlider() {
+		if (btnVlider == null) {
+			btnVlider = new JButton("Valider");
+			btnVlider.addActionListener(e -> {
+				if (txtnumFiche.getText().isEmpty() || datePicker.getDate() == null) {
+			        JOptionPane.showMessageDialog(null, "Numéro et date sont obligatoires.");
+			        return;
+			    }
+
+			    // ⚡ Ici on récupère l’enseignant complet
+			    String inenseignant = (String) cmbnumEnseignant.getSelectedItem();
+			    if (inenseignant == null || inenseignant.isEmpty()) {
+			        JOptionPane.showMessageDialog(null, "Sélectionnez un enseignant.");
+			        return;
+			    }
+			    ArrayList<Enseignant> enseignants = new Enseignant().lireRecupLigne(inenseignant);
+			    Enseignant enseignant = enseignants.isEmpty() ? new Enseignant(inenseignant) : enseignants.get(0);
+
+			    // Formatage de la date
+			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			    String dateSQL = sdf.format(datePicker.getDate());
+
+			    String heureFiche = new SimpleDateFormat("HH:mm").format((Date) heurePresence.getValue());
+
+			    FichePresence fiche = new FichePresence(txtnumFiche.getText(), datePicker.getDate(), heureFiche, enseignant);
+
+			    if(actionDemandee.equals("Ajout")){
+
+					    
+					    if (fiche.creerCRUD(
+					    		txtnumFiche.getText(), datePicker.getDate(), heureFiche, enseignant.getNumEnseignant())
+					    		) {
+					        leModeleFichePresence.creerMOD(fiche);
+					        JOptionPane.showMessageDialog(null, "Fiche ajoutée avec succès. Date: " + dateSQL +
+					                ", Enseignant: " + enseignant.getNomEnseignant());
+					    }
+			    	}
+			    if(actionDemandee.equals("Modifier")){
+			    	 int ligne = table.getSelectedRow();
+                     if (fiche.modifierCRUD(
+                    		 txtnumFiche.getText(), datePicker.getDate(), heureFiche, enseignant.getNumEnseignant())) {
+                         JOptionPane.showMessageDialog(null, "Modification réussie !");
+                         leModeleFichePresence.modifierMOD(ligne, ligne, fiche);
+                     }
+			    	
+			    }
+					});
+			
+
+			btnVlider.setFont(new Font("Tahoma", Font.BOLD, 12));
+			btnVlider.setBounds(750, 368, 116, 23);
+		}
+		return btnVlider;
+	}
+	private JButton getBtnAnnuler() {
+		if (btnAnnuler == null) {
+			btnAnnuler = new JButton("Annuler");
+			btnAnnuler.setFont(new Font("Tahoma", Font.BOLD, 12));
+			btnAnnuler.setBounds(750, 484, 116, 23);
+		}
+		return btnAnnuler;
+	}
+	
+	
+	
+	
+	// affichage calendrier et date
+	private JXDatePicker getDatePicker() {
+	    if (datePicker == null) {
+	        datePicker = new JXDatePicker();
+	        datePicker.setBounds(132, 37, 98, 20); // placé sous "date Fiche"
+	        datePicker.setDate(new java.util.Date()); // valeur par défaut = aujourd'hui
+	    }
+	    return datePicker;
+	}
+
+	
+	private JSpinner getHeurePresence() {
+	    if (heurePresence == null) {
+	        SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, Calendar.HOUR_OF_DAY);
+	        heurePresence = new JSpinner(model);
+	        heurePresence.setEditor(new JSpinner.DateEditor(heurePresence, "HH:mm"));
+	        heurePresence.setBounds(252, 37, 86, 20); // placé sous "Heure Fiche"
+	    }
+	    return heurePresence;
+	}
+	
+	
+	private JLabel getLblAjoutPrsence() {
+		if (lblAjoutPrsence == null) {
+			lblAjoutPrsence = new JLabel("Ajout Présence");
+			lblAjoutPrsence.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblAjoutPrsence.setBounds(10, 152, 145, 23);
+		}
+		return lblAjoutPrsence;
+	}
+	private JComboBox getCmbnumEleve() {
+		if (cmbnumEleve == null) {
+			cmbnumEleve = new JComboBox();
+			cmbnumEleve.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent arg0) {
+					btnAjouter.setVisible(true);
+				}
+			});
+			cmbnumEleve.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent arg0) {
+	                if (arg0.getStateChange() == ItemEvent.SELECTED) {
+	                    String numEleve = (String) cmbnumEleve.getSelectedItem();
+	                    if (numEleve != null && !numEleve.isEmpty()) {
+	                        Eleve eleve = new Eleve();
+	                        lesEleves = eleve.lireRecupEleveParId(numEleve);
+	                        for (Eleve e : lesEleves) {
+	                        	cmbnumero.setSelectedItem(e.getNumero());
+	                        	txtnomEleve.setText(e.getNomEleve());
+	                        	txtprenomEleve.setText(e.getPrenomEleve());
+	                        }
+	                    }
+	                }
+	            }
+	        });
+			Eleve eleve=new Eleve();
+			lesEleves=eleve.lireRecupCRUD();
+			cmbnumEleve.addItem("");
+			for(Eleve elem:lesEleves){
+				cmbnumEleve.addItem(elem.getNumEleve());
+			}
+			cmbnumEleve.setBounds(10, 199, 86, 20);
+		}
+		return cmbnumEleve;
+	}
+	private JComboBox getCmbnumero() {
+		if (cmbnumero == null) {
+			cmbnumero = new JComboBox();
+			cmbnumero.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent arg0) {
+					btnAjouter.setVisible(true);
+				}			});
+			cmbnumero.addItemListener(new ItemListener() {
+				 public void itemStateChanged(ItemEvent arg0) {
+		                if (arg0.getStateChange() == ItemEvent.SELECTED) {
+		                    String numero = (String) cmbnumero.getSelectedItem();
+		                    if (numero != null && !numero.isEmpty()) {
+		                        Eleve eleve = new Eleve();
+		                        lesEleves = eleve.lireRecupEleveParNumero(numero);
+		                        for (Eleve e : lesEleves) {
+		                        	cmbnumEleve.setSelectedItem(e.getNumEleve());
+		                        	txtnomEleve.setText(e.getNomEleve());
+		                        	txtprenomEleve.setText(e.getPrenomEleve());
+		                        }
+		                    }
+		                }
+		            }
+		        });
+			Eleve eleve=new Eleve();
+			lesEleves=eleve.lireRecupCRUD();
+			cmbnumero.addItem("");
+			for(Eleve elem:lesEleves){
+				cmbnumero.addItem(elem.getNumEleve());
+			}
+			cmbnumero.setBounds(106, 199, 71, 20);
+		}
+		return cmbnumero;
+	}
+	private JTextField getTxtnomEleve() {
+		if (txtnomEleve == null) {
+			txtnomEleve = new JTextField();
+			txtnomEleve.setBounds(187, 199, 166, 20);
+			txtnomEleve.setColumns(10);
+			
+		}
+		return txtnomEleve;
+	}
+	private JTextField getTxtprenomEleve() {
+		if (txtprenomEleve == null) {
+			txtprenomEleve = new JTextField();
+			txtprenomEleve.setBounds(363, 199, 145, 20);
+			txtprenomEleve.setColumns(10);
+		}
+		return txtprenomEleve;
+	}
+	private JCheckBox getChkpresent() {
+		if (chkpresent == null) {
+			chkpresent = new JCheckBox("");
+			chkpresent.setBounds(667, 196, 31, 23);
+		}
+		return chkpresent;
+	}
+	private JButton getBtnAjouter() {
+		if (btnAjouter == null) {
+			btnAjouter = new JButton("Ajouter ");
+			// --- Bouton Ajouter ---
+			btnAjouter.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					String innumeleve = (String) cmbnumEleve.getSelectedItem();
+					Eleve eleve = new Eleve(innumeleve);
+					
+					String innumfiche = (String) txtnumFiche.getText();
+					FichePresence fichepresence = new FichePresence(innumfiche);	
+					
+					
+					if (chkpresent.isSelected()){
+						Presence presence = new Presence(eleve, fichepresence, "1"
+								);
+						if ( presence.creerCRUD((String) cmbnumEleve.getSelectedItem(),
+								txtnumFiche.getText(),"1")) 
+							leModelePresence.creerMOD(presence);
+					}else{
+						Presence presence = new Presence(eleve, fichepresence, "0"
+								);
+						if ( presence.creerCRUD((String) cmbnumEleve.getSelectedItem(),
+								txtnumFiche.getText(),"0")) 
+							leModelePresence.creerMOD(presence);
+					}		
+					
+				}
+			});
+
+			btnAjouter.setFont(new Font("Tahoma", Font.BOLD, 12));
+			btnAjouter.setBounds(739, 198, 116, 23);
+		}
+		return btnAjouter;
+	}
+	private JScrollPane getScrollPane_1() {
+		if (scrollPane_1 == null) {
+			scrollPane_1 = new JScrollPane();
+			scrollPane_1.setBounds(17, 260, 723, 96);
+			
+			scrollPane_1.setViewportView(getTable_2());
+		}
+		return scrollPane_1;
+	}
+	
+	private JLabel getLblNumero() {
+		if (lblNumero == null) {
+			lblNumero = new JLabel("Numero");
+			lblNumero.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNumero.setBounds(106, 171, 69, 14);
+		}
+		return lblNumero;
+	}
+	private JLabel getLblNEleve() {
+		if (lblNEleve == null) {
+			lblNEleve = new JLabel("N° Eleve");
+			lblNEleve.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNEleve.setBounds(10, 171, 86, 14);
+		}
+		return lblNEleve;
+	}
+	private JLabel getLblNom_1() {
+		if (lblNom_1 == null) {
+			lblNom_1 = new JLabel("Nom");
+			lblNom_1.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNom_1.setBounds(187, 171, 111, 14);
+		}
+		return lblNom_1;
+	}
+	private JLabel getLblPrnom_1() {
+		if (lblPrnom_1 == null) {
+			lblPrnom_1 = new JLabel("Prénom");
+			lblPrnom_1.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblPrnom_1.setBounds(363, 171, 86, 14);
+		}
+		return lblPrnom_1;
+	}
+	private JLabel getLblNClasse() {
+		if (lblNClasse == null) {
+			lblNClasse = new JLabel("N° Classe");
+			lblNClasse.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblNClasse.setBounds(518, 161, 96, 14);
+		}
+		return lblNClasse;
+	}
+	private JLabel getLblPresent() {
+		if (lblPresent == null) {
+			lblPresent = new JLabel("Present");
+			lblPresent.setFont(new Font("Tahoma", Font.BOLD, 12));
+			lblPresent.setBounds(667, 184, 66, 14);
+		}
+		return lblPresent;
+	}
+	private JTable getTable_2() {
+		if (table_2 == null) {
+			//table_2 = new JTable();
+			table_2 = new JTable(leModelePresence);
+			table_2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+		}
+		return table_2;
+	}
+	
+	
+	private void afficher(int numLigne){
+		txtnumFiche.setText((String) leModeleFichePresence.getValueAt(numLigne, 0));
+		//txtdateFiche.setText((String) leModeleFichePresence.getValueAt(numLigne, 1));
+		// Date fiche (colonne 1)
+	    Object dateObj = leModeleFichePresence.getValueAt(numLigne, 1);
+	    if (dateObj instanceof Date) {
+	        datePicker.setDate((Date) dateObj);
+	    }
+	    
+		//txtheureFiche.setText((String) leModeleFichePresence.getValueAt(numLigne, 2));
+	 // Heure fiche (colonne 2, String → parse en Date pour le JSpinner)
+	    Object heureObj = leModeleFichePresence.getValueAt(numLigne, 2);
+	    if (heureObj instanceof String) {
+	        try {
+	            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
+	            heurePresence.setValue(sdf.parse((String) heureObj));
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+		cmbnumEnseignant.setSelectedItem(leModeleFichePresence.getValueAt(numLigne, 3));
+		txtnomEnseignant.setText((String) leModeleFichePresence.getValueAt(numLigne, 4));
+		
+		
+	}
+	
+	
+	
+	
+	private void masquerComposant() {
+		
+		btnVlider.setVisible(false);
+		btnAnnuler.setVisible(false);
+		btnAjouter.setVisible(false);
+	}
+	private JComboBox getCmbNumClasse() {
+		  if (cmbNumClasse == null) {
+		        cmbNumClasse = new JComboBox<>();
+		        cmbNumClasse.addItemListener(new ItemListener() {
+		            public void itemStateChanged(ItemEvent arg0) {
+		                String numClasse = (String) cmbNumClasse.getSelectedItem();
+
+		                // Vérifie si rien n'est sélectionné
+		                if (numClasse == null || numClasse.trim().isEmpty()) {
+		                    if (cmbnumEleve != null) cmbnumEleve.removeAllItems();
+		                    if (cmbnumero != null) cmbnumero.removeAllItems();
+		                    return;
+		                }
+
+		                // Vider les combos avant de remplir
+		                cmbnumEleve.removeAllItems();
+		                cmbnumEleve.addItem("");
+
+		                cmbnumero.removeAllItems();
+		                cmbnumero.addItem("");
+
+		                // Charger les élèves de la classe
+		                Eleve eleve = new Eleve();
+		                lesEleves = eleve.lireRecupEleveParClasse(numClasse);
+
+		                // Remplir les combos
+		                for (Eleve e : lesEleves) {
+		                    cmbnumEleve.addItem(e.getNumEleve()); // identifiant élève
+		                    cmbnumero.addItem(e.getNumero());     // numéro élève
+		                }
+		            }
+		        });
+
+
+
+		        // Charger toutes les classes
+		        Classe classe = new Classe();
+		        lesClasses = classe.lireRecupCRUD();
+		        cmbNumClasse.addItem("");
+		        for (Classe elem : lesClasses) {
+		            cmbNumClasse.addItem(elem.getNumClasse());
+		        }
+			cmbNumClasse.setBounds(518, 199, 102, 20);
+		}
+		return cmbNumClasse;
+	}
+}

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Statistique" pageWidth="1000" orientation="Landscape" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" >
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="numcommune" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT Commune.numcommune, nomcommune, Fokontany.idfoko, nomfoko, 
+				SUM(inscrits) as inscr, SUM(votant) as votan , SUM(blancnul) as bl,
+				Resultatvote.numparti, nomparti, SUM(voix) as voi,
+				(SUM(votant) - SUM(blancnul)) as SE, ROUND(((SUM(voix) * 100) / SUM(votant)),2) as prct
+				FROM Commune
+				INNER JOIN Fokontany ON Commune.numcommune = Fokontany.numcommune
+				INNER JOIN Bureauvote ON Fokontany.idfoko = Bureauvote.idfoko
+				INNER JOIN Resultatvote ON Bureauvote.numbv = Resultatvote.numbv
+				INNER JOIN Parti ON Parti.numparti = Resultatvote.numparti
+				WHERE Commune.numcommune = $P{numcommune} GROUP BY Resultatvote.numparti,Commune.numcommune ;]]>
+	</queryString>
+	<field name="numcommune" class="java.lang.String"/>
+	<field name="nomcommune" class="java.lang.String"/>
+	<field name="idfoko" class="java.lang.String"/>
+	<field name="nomfoko" class="java.lang.String"/>
+	<field name="inscr" class="java.lang.String"/>
+	<field name="votan" class="java.lang.String"/>
+	<field name="bl" class="java.lang.String"/>
+	<field name="numparti" class="java.lang.String"/>
+	<field name="nomparti" class="java.lang.String"/>
+	<field name="voi" class="java.lang.String"/>
+	<field name="prct" class="java.lang.String"/>
+	
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="208" splitType="Stretch">			
+			<staticText>
+				<reportElement x="19" y="23" width="515" height="42" />
+				<textElement textAlignment="Left">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Resultat par Commune]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="138" width="132" height="25" />
+				
+				<textElement textAlignment="Left" >
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° Commune]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="135" y="138" width="223" height="25" />
+				
+				<textElement textAlignment="Left" >
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nom Commune]]></text>
+			</staticText>
+
+			<staticText>
+				<reportElement x="358" y="138" width="100" height="25" />
+				
+				<textElement textAlignment="Center" >
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inscrits]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="138" width="100" height="25" />
+				
+				<textElement textAlignment="Center" >
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Votants]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="138" width="100" height="25" />
+				
+				<textElement textAlignment="Center" >
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Blanc-Nul]]></text>
+			</staticText>
+
+			<textField>
+				<reportElement x="3" y="163" width="132" height="30" />
+				
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numcommune}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="163" width="223" height="30" />				
+				<textElement textAlignment="Left" >
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomcommune}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="308" y="163" width="100" height="30" />				
+				<textElement textAlignment="Right" >
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{inscr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="163" width="100" height="30" />				
+				<textElement textAlignment="Right" >
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{votan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="508" y="163" width="100" height="30" />				
+				<textElement textAlignment="Right" >
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bl}]]></textFieldExpression>
+			</textField>	
+		</band>	
+	</title>
+
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="0" width="76" height="31" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[N° Parti]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="0" width="298" height="31" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Parti]]></text>
+			</staticText>
+			
+			<staticText>
+				<reportElement x="376" y="0" width="74" height="31" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" >
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Voix]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="100" height="31" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" >
+					<font size="11"/>
+				</textElement>
+				<text><![CDATA[Pourcentage]]></text>
+			</staticText>
+
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="76" height="20" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numparti}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="78" y="0" width="298" height="20" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomparti}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="376" y="0" width="74" height="20" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" >
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{voi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="450" y="0" width="100" height="20" />
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" >
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prct}]]></textFieldExpression>
+			</textField>
+			
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="139" splitType="Stretch">
+			
+		</band>
+	</summary>
+</jasperReport>
